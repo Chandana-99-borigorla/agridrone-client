@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react'
+import { registerUser } from '../services/authService'
 
 const passwordStrength = (password) => {
   if (!password) return { score: 0, label: '', color: '' }
@@ -29,6 +30,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [serverError, setServerError] = useState('')
 
   const strength = passwordStrength(form.password)
 
@@ -52,6 +54,7 @@ const Signup = () => {
     const { name, value, type, checked } = e.target
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value })
     if (errors[name]) setErrors({ ...errors, [name]: '' })
+    if (serverError) setServerError('')
   }
 
   const handleSubmit = async (e) => {
@@ -59,8 +62,20 @@ const Signup = () => {
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setLoading(true)
-    // TODO Day 6: await axios.post('/api/auth/register', form)
-    setTimeout(() => { setLoading(false); navigate('/login') }, 1500)
+    try {
+      await registerUser({
+        fullName: form.fullName,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+        role: form.role,
+      })
+      navigate('/login')
+    } catch (err) {
+      setServerError(err.response?.data?.message || 'Registration failed. Try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputBase = (field) =>
@@ -71,7 +86,6 @@ const Signup = () => {
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden py-8">
 
-      {/* Full-screen blurred bg — different photo for signup */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-110"
         style={{
@@ -82,10 +96,8 @@ const Signup = () => {
       <div className="absolute inset-0 bg-dark-300/65" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary/8 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Floating glass card */}
       <div className="relative z-10 w-full max-w-md mx-4">
 
-        {/* Logo */}
         <div className="flex justify-center mb-6">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30">
@@ -97,7 +109,6 @@ const Signup = () => {
           </Link>
         </div>
 
-        {/* Glass card */}
         <div
           className="rounded-3xl border border-white/10 p-8 shadow-2xl"
           style={{
@@ -136,6 +147,13 @@ const Signup = () => {
               </button>
             ))}
           </div>
+
+          {/* Server Error */}
+          {serverError && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">
+              <p className="text-red-400 text-sm">{serverError}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
 
@@ -253,7 +271,6 @@ const Signup = () => {
           Protected by AgriDrone · Your data stays private 🔒
         </p>
       </div>
-
     </div>
   )
 }

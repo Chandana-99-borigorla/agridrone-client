@@ -19,10 +19,10 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AD</span>
             </div>
-            <span className="text-white font-bold text-lg">
+            <span className="text-white font-bold text-xl">
               Agri<span className="text-primary">Drone</span>
             </span>
           </div>
@@ -32,23 +32,23 @@ const Navbar = () => {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200"
+                className="text-white hover:text-green text-base font-medium transition-colors duration-200"
               >
                 {link.name}
               </a>
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-12">
             <Link
               to="/login"
-              className="text-gray-400 hover:text-white text-sm font-medium transition-colors px-4 py-2"
+              className="text-white hover:text-green text-base font-medium transition-colors px-4 py-2"
             >
               Login
             </Link>
             <Link
               to="/signup"
-              className="bg-primary hover:bg-primary-dark text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-200"
+              className="bg-primary hover:bg-primary-dark text-white text-base font-medium px-4 py-2 rounded-lg transition-colors duration-200"
             >
               Get Started
             </Link>
